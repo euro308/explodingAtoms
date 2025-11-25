@@ -3,20 +3,22 @@ package cz.bendik.explodingatoms.businesslogic;
 import java.util.ArrayList;
 
 public class Block {
-    private Colors colors;
+    private gameColors gameColor;
     private final ArrayList<Block> neighbors;
     private int electronCount;
-    private final int position;
+    private final int row;
+    private final int col;
 
-    public Block(Colors colors, ArrayList<Block> neighbors, int electronCount, int position) {
-        this.colors = colors;
+    public Block(gameColors color, ArrayList<Block> neighbors, int electronCount, int row, int col) {
+        this.gameColor = color;
         this.neighbors = neighbors;
         this.electronCount = electronCount;
-        this.position = position;
+        this.row = row;
+        this.col = col;
     }
 
-    public Colors getColor() {
-        return colors;
+    public gameColors getGameColor() {
+        return gameColor;
     }
 
     public ArrayList<Block> getNeighbors() {
@@ -27,12 +29,16 @@ public class Block {
         return electronCount;
     }
 
-    public int getPosition() {
-        return position;
+    public int getRow() {
+        return row;
     }
 
-    public void setColor(Colors colors) {
-        this.colors = colors;
+    public int getCol() {
+        return col;
+    }
+
+    public void setColor(gameColors gameColor) {
+        this.gameColor = gameColor;
     }
 
     public void addNeighbor(Block block) {

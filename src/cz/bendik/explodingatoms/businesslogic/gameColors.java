@@ -1,6 +1,6 @@
 package cz.bendik.explodingatoms.businesslogic;
 
-public enum Colors {
+public enum gameColors {
     RED,
     BLUE,
     GRAY

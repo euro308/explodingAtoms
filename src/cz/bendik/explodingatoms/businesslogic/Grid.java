@@ -3,58 +3,51 @@ package cz.bendik.explodingatoms.businesslogic;
 import java.util.ArrayList;
 
 public class Grid {
-    private final ArrayList<Block> blocks = new ArrayList<>();
     private final int gridSize = 8; // 8 krát 8 je standardní plocha
+    private final Block[][] blocks = new Block[gridSize][gridSize];
 
     public void prepareGame() {
-        blocks.clear(); // Vyčistí pole v případě další hry (hráč spustí hru znovu)
-
-        for (int i = 0; i < (gridSize * gridSize); i++) { // Naplnit pole prázdnými bloky
-            blocks.add(new Block(Colors.GRAY, new ArrayList<>(), 0, i));
+        for (int row = 0; row < gridSize; row++) { // Naplnit pole prázdnými bloky
+            for (int col = 0; col < gridSize; col++) {
+                blocks[row][col] = new Block(gameColors.GRAY, new ArrayList<>(), 0, row, col);
+            }
         }
 
-        for(Block block : blocks) { // Nastavit sousedy
-            int pos = block.getPosition();
-            int row =  pos / gridSize;
-            int col =  pos % gridSize;
+        for (int row = 0; row < gridSize; row++) { // Nastavit sousedy
+            for (int col = 0; col < gridSize; col++) {
+                Block block = blocks[row][col];
 
-            if(row > 0) { // Nahoru
-                block.addNeighbor(blocks.get(pos - gridSize));
-            }
-            if(row < gridSize - 1) { // Dolů
-                block.addNeighbor(blocks.get(pos + gridSize));
-            }
-            if(col > 0) { // Doleva
-                block.addNeighbor(blocks.get(pos - 1));
-            }
-            if(col < gridSize - 1) {
-                block.addNeighbor(blocks.get(pos + 1));
+                if (row > 0)               block.addNeighbor(blocks[row - 1][col]);
+                if (row < gridSize - 1)    block.addNeighbor(blocks[row + 1][col]);
+                if (col > 0)               block.addNeighbor(blocks[row][col - 1]);
+                if (col < gridSize - 1)    block.addNeighbor(blocks[row][col + 1]);
             }
         }
     }
 
-    public void addElectron(Block block, Colors playerColors) {
-        if(block.getElectronCount() == 0) { // Pokud je pole prázdné
-            block.setColor(playerColors);
+    public void addElectron(Block block, gameColors playerGameColors) {
+        if (block.getElectronCount() == 0) { // Pokud je pole prázdné
+            block.setColor(playerGameColors);
         }
 
         block.setElectronCount(block.getElectronCount() + 1);
 
-        if((block.getElectronCount()) >= block.getNeighbors().size()) { // Výbuch
-            explode(block, playerColors);
+        if ((block.getElectronCount()) >= block.getNeighbors().size()) { // Výbuch
+            explode(block, playerGameColors);
         }
     }
 
-    public void explode(Block block, Colors playerColors) {
+    public void explode(Block block, gameColors playerGameColors) {
         block.setElectronCount(0);
+        block.setColor(gameColors.GRAY);
 
-        for(Block neighbor : block.getNeighbors()) {
-            neighbor.setColor(playerColors); // Změní barvu i v případě, že byl atom protihráčův
-            addElectron(neighbor, playerColors);
+        for (Block neighbor : block.getNeighbors()) {
+            neighbor.setColor(playerGameColors); // Změní barvu i v případě, že byl atom protihráčův
+            addElectron(neighbor, playerGameColors);
         }
     }
 
-    public ArrayList<Block> getBlocks() {
+    public Block[][] getBlocks2D() {
         return blocks;
     }
 

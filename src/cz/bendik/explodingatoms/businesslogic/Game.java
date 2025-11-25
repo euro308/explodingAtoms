@@ -2,15 +2,15 @@ package cz.bendik.explodingatoms.businesslogic;
 
 public class Game {
     private final Grid grid = new Grid();
-    private Colors currentPlayer;
+    private gameColors currentPlayer;
     private boolean isFinished = false;
-    private Colors winner;
+    private gameColors winner;
     private int turn;
 
     public void startNewGame() {
         isFinished = false;
         winner = null;
-        currentPlayer = Colors.BLUE; // Začne vždy modrý
+        currentPlayer = gameColors.BLUE; // Začne vždy modrý
         turn = 0;
         grid.prepareGame();
     }
@@ -18,9 +18,9 @@ public class Game {
     public void gameRound(Block block) {
         if(isFinished) return;
 
-        if(block.getColor() == Colors.GRAY || block.getColor() == currentPlayer) {
+        if(block.getGameColor() == gameColors.GRAY || block.getGameColor() == currentPlayer) {
             grid.addElectron(block, currentPlayer);
-            currentPlayer = (currentPlayer == Colors.BLUE) ? Colors.RED : Colors.BLUE; // Otočit hráče
+            currentPlayer = (currentPlayer == gameColors.BLUE) ? gameColors.RED : gameColors.BLUE; // Otočit hráče
             checkGameState();
             turn++;
         }
@@ -30,22 +30,27 @@ public class Game {
         int blue = 0;
         int red = 0;
 
-        for(Block block : grid.getBlocks()) {
-            if(block.getColor() == Colors.BLUE) {
-                blue++;
+        for(int row = 0; row < grid.getGridSize(); row++) {
+            for(int col = 0; col < grid.getGridSize(); col++) {
+                Block block = grid.getBlocks2D()[row][col];
+
+                if(block.getGameColor() == gameColors.BLUE) {
+                    blue++;
+                }
+                else if(block.getGameColor() == gameColors.RED) {
+                    red++;
+                }
             }
-            else if(block.getColor() == Colors.RED) {
-                red++;
-            }
+
         }
 
         if(turn > 2 ) { // Oba hráči zahráli aspoň jednou
             if (blue > 0 && red == 0) {
                 isFinished = true;
-                winner = Colors.BLUE;
+                winner = gameColors.BLUE;
             } else if (red > 0 && blue == 0) {
                 isFinished = true;
-                winner = Colors.RED;
+                winner = gameColors.RED;
             }
         }
     }
@@ -58,7 +63,7 @@ public class Game {
         return grid;
     }
 
-    public Colors getWinner() {
+    public gameColors getWinner() {
         return winner;
     }
 }
